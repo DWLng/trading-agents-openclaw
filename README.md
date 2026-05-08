@@ -8,6 +8,25 @@ A股 AI 投研分析系统 — 集成东方财富妙想数据源 + TradingAgents
 
 数据源优先级：妙想 mx-skills（东方财富）→ AkShare → yfinance
 
+## OpenClaw Agent 配置说明
+
+本仓库包含完整的 OpenClaw Agent 配置，是投研 Agent 的"大脑"。核心文件：
+
+| 文件 | 作用 |
+|------|------|
+| `SOUL.md` | 认知核心：三大准则（证据优先、概率思维、认知谦逊）、张力仲裁、风险节奏 |
+| `USER.md` | 用户画像：高风险偏好、纯右侧交易、超短线（1-3天持有） |
+| `IDENTITY.md` | 身份矩阵：六大面具（猎人/解剖师/会计/战略家/守夜人/学徒） |
+| `AGENTS.md` | 操作手册：每日选股、个股分析、每日复盘、持仓监控四大能力 |
+| `TOOLS.md` | 工具调用：MX Skills（东方财富）+ 文财 Skills 双引擎 |
+| `HEARTBEAT.md` | 心跳调度：15:30选股、16:00复盘、9:30持仓监控 |
+| `BOOTSTRAP.md` | 启动协议：五大意图类型识别、风格校准 |
+| `METACOGNITION.md` | 元认知：五种认知状态（常规/探索/危机/反思/创新） |
+| `ADAPTIVE_CONSTRAINTS.md` | 自适应约束：五级约束谱系（严格↔宽松） |
+| `FAILURE_PROTOCOL.md` | 故障协议：四级故障体系、双引擎降级链 |
+
+完整分析流程参考 `agent/references/deep-dive-workflow.md`（十三维度深度分析框架）。
+
 ## 系统架构
 
 ```
@@ -48,6 +67,20 @@ A股 AI 投研分析系统 — 集成东方财富妙想数据源 + TradingAgents
 
 ```
 trading-agents-openclaw/
+├── agent/                      # OpenClaw Agent 配置（核心认知层）
+│   ├── SOUL.md                 # 认知核心：三大准则、张力仲裁、风险节奏
+│   ├── USER.md                 # 用户画像：高风险偏好、右侧交易、超短线
+│   ├── IDENTITY.md             # 身份矩阵：六大面具、四层认知
+│   ├── AGENTS.md               # 操作手册：四大能力、双引擎数据系统
+│   ├── TOOLS.md                # 工具调用指南：MX Skills + 文财 Skills
+│   ├── HEARTBEAT.md            # 心跳调度：选股/复盘/监控任务节律
+│   ├── BOOTSTRAP.md            # 启动协议：五大意图识别、风格校准
+│   ├── METACOGNITION.md        # 元认知：五种认知状态、模式识别
+│   ├── ADAPTIVE_CONSTRAINTS.md # 自适应约束：五级约束谱系
+│   ├── FAILURE_PROTOCOL.md     # 故障协议：四级故障体系、双引擎降级
+│   ├── memory/                 # Agent 记忆存储
+│   └── references/
+│       └── deep-dive-workflow.md  # 十三维度深度分析框架
 ├── trading-agents/           # TradingAgents 核心分析
 │   ├── SKILL.md             # Skill 配置说明
 │   ├── scripts/
@@ -75,6 +108,8 @@ trading-agents-openclaw/
 │   │   ├── SKILL.md
 │   │   └── mx_moni.py
 │   └── mx-run.sh            # 统一调用 wrapper
+├── .env.example             # 环境变量模板
+├── .gitignore               # Git 忽略配置
 └── README.md
 ```
 
