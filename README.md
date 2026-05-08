@@ -93,8 +93,6 @@ trading-agents-openclaw/
 │   └── README.md              # 数据初始化说明
 ├── reports/                   # 投研报告输出
 │   └── README.md              # 报告格式说明
-├── plan.md                    # v1 改造计划
-├── plan-v2.md                 # Harness思维改造计划
 ├── skills-lock.json           # Skill 版本锁定
 ├── trading-agents/           # TradingAgents 核心分析
 │   ├── SKILL.md             # Skill 配置说明
