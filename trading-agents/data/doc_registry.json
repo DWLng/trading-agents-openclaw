@@ -1,0 +1,10 @@
+{
+  "example": {
+    "document_id": "YOUR_DOCUMENT_ID",
+    "url": "https://your-workspace.feishu.cn/docx/YOUR_DOCUMENT_ID",
+    "title": "股票代码 投研分析",
+    "created_at": "2026-01-01T00:00:00.000000",
+    "analysis_count": 0,
+    "analysis_history": []
+  }
+}

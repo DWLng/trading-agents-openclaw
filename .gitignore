@@ -1,0 +1,40 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Output data (user-specific)
+mx_data/
+logs/
+*.xlsx
+*.csv
+
+# API keys and secrets - NEVER commit these
+.env
+*.key
+secrets/
+credentials/
+
+# OpenClaw agent data
+.openclaw/
+.tradingagents/
+
+# Local configs
+*.local.json
+config.local.json
