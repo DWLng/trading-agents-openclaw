@@ -79,8 +79,23 @@ trading-agents-openclaw/
 │   ├── ADAPTIVE_CONSTRAINTS.md # 自适应约束：五级约束谱系
 │   ├── FAILURE_PROTOCOL.md     # 故障协议：四级故障体系、双引擎降级
 │   ├── memory/                 # Agent 记忆存储
+│   │   └── README.md          # 记忆文件说明
 │   └── references/
+│       ├── analysis-method.md  # 六维快速分析框架
 │       └── deep-dive-workflow.md  # 十三维度深度分析框架
+├── scripts/                   # 本地数据管理脚本
+│   ├── bulk_download.py       # A股历史数据批量下载（baostock）
+│   ├── daily_update.py        # 每日增量更新（收盘后）
+│   ├── incremental_update.py   # 增量更新脚本
+│   ├── local_data_loader.py   # 本地数据加载器
+│   └── query_local.py         # 本地数据查询
+├── data/                      # 本地数据存储
+│   └── README.md              # 数据初始化说明
+├── reports/                   # 投研报告输出
+│   └── README.md              # 报告格式说明
+├── plan.md                    # v1 改造计划
+├── plan-v2.md                 # Harness思维改造计划
+├── skills-lock.json           # Skill 版本锁定
 ├── trading-agents/           # TradingAgents 核心分析
 │   ├── SKILL.md             # Skill 配置说明
 │   ├── scripts/

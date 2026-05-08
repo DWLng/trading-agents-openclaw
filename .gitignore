@@ -25,6 +25,21 @@ logs/
 *.xlsx
 *.csv
 
+# K线数据（由脚本下载，用户私有）
+data/daily_kline/
+data/*.json
+data/update_progress.json
+data/download_progress.json
+data/incremental_progress.json
+
+# Agent 记忆和报告（用户私有）
+agent/memory/README.md
+agent/memory/[0-9]*.md
+agent/memory/charts/
+agent/memory/deep-research-*/
+agent/memory/.dreams/
+reports/
+
 # API keys and secrets - NEVER commit these
 .env
 *.key
