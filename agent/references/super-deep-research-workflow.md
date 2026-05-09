@@ -354,29 +354,91 @@
 └────────┬───────────┘
          ↓
 ┌─ Task 5: 报告组装 ─┐
-│  - 创建飞书文档   │ ← 主要输出
+│  - 创建飞书文档   │ ← 主要输出（可选）
 │  - 构建Dashboard JSON│
-│  - 调用report-generator│ ← HTML报告
+│  - 调用report-generator│ ← HTML报告（必须）
 │  - 部署Cloudflare Pages│
 └────────┬───────────┘
          ↓
     同时输出：
-    - 飞书文档链接
-    - HTML报告Cloudflare Pages链接
+    - 飞书文档链接（如成功）
+    - HTML报告Cloudflare Pages链接（必须）
 ```
 
 ---
 
 ## 五、输出方案
 
-**主方案**：Cloudflare Pages（已配置）
-- 使用 `report-generator` skill 生成HTML
-- 使用 `cf-upload` skill 部署到 Cloudflare Pages
-- 生成分享链接发送给用户
+**HTML报告是必须交付物**，无论飞书文档是否成功都必须生成。
 
-**流程**：
+### 5.1 独立并行执行
+
+**重要**：HTML报告生成与飞书文档创建是**独立并行**的两条线：
+
 ```
-Markdown + JSON → report-generator.py → HTML报告 → cf_pages_deploy.py → Cloudflare Pages链接
+飞书文档创建（可能失败/出错）
+        ↓
+    继续下一步 ← 如果失败，跳过继续
+
+HTML报告生成（必须执行）
+        ↓
+    写入 /tmp/report_input.json
+        ↓
+    python3 skills/report-generator/report_generator.py /tmp/report_input.json
+        ↓
+    python3 skills/cf-upload/cf_pages_deploy.py <生成的HTML路径>
+        ↓
+    获取Cloudflare Pages链接
+```
+
+**不要在飞书文档步骤卡住**。即使飞书创建失败，也要继续生成HTML报告。
+
+### 5.2 HTML报告生成代码
+
+```python
+# 1. 准备数据（无论飞书是否成功都要执行）
+report_data = {
+    "title": "{股票名称}({代码}) 超级深度调研",
+    "subtitle": "分析日期：YYYY-MM-DD | 分析深度：Level 4",
+    "content_markdown": markdown_content,  # 完整研究报告
+    "dashboard": [
+        {"label": "综合评分", "value": "XX分", "icon": "star", "value_class": "text-blue-400"},
+        {"label": "目标价", "value": "XX元", "icon": "target", "value_class": "text-green-400"},
+        {"label": "止损位", "value": "XX元", "icon": "shield", "value_class": "text-red-400"}
+    ],
+    "score": XX
+}
+
+# 2. 写入临时文件
+import json
+with open("/tmp/report_input.json", "w", encoding="utf-8") as f:
+    json.dump(report_data, f, ensure_ascii=False, indent=2)
+
+# 3. 调用report-generator（使用绝对路径）
+subprocess.run([
+    "python3",
+    "/Users/mac/.openclaw/agents/trading/skills/report-generator/report_generator.py",
+    "/tmp/report_input.json"
+])
+
+# 4. 部署到Cloudflare Pages
+subprocess.run([
+    "python3",
+    "/Users/mac/.openclaw/agents/trading/skills/cf-upload/cf_pages_deploy.py",
+    "<上面生成的HTML文件路径>"
+])
+```
+
+### 5.3 发送给用户的格式
+
+```
+📊 {报告类型} 已生成
+
+{股票名称} {分析日期}
+
+🔗 网页版研报: https://xxx.trading-reports.pages.dev/{文件名}.html
+
+{简要摘要}
 ```
 
 **优点**：

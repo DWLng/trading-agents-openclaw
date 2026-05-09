@@ -1123,6 +1123,12 @@ print(get_stock_pic_url("688981"))     # 科创板股票
 
 ## 十、HTML报告生成与发布流程
 
+### 10.0 关键原则
+
+**HTML报告是必须交付物**，无论飞书文档是否成功都必须生成。
+
+> ⚠️ **不要在飞书文档步骤卡住**。即使飞书创建/更新失败，也要继续生成HTML报告。
+
 ### 10.1 报告生成架构
 
 本框架支持生成专业HTML报告，架构如下：
@@ -1139,12 +1145,10 @@ cf_pages_deploy.py 部署到 Cloudflare Pages
 分享链接给用户
 ```
 
-### 10.2 调用流程
+### 10.2 独立执行代码
 
-在分析完成后，按照以下流程生成HTML报告：
-
-**Step 1: 准备数据**
 ```python
+# 1. 准备数据
 report_data = {
     "title": "{股票名称}({代码}) 深度分析",
     "subtitle": "分析日期：YYYY-MM-DD | 分析深度：Level X",
@@ -1156,16 +1160,25 @@ report_data = {
     ],
     "score": XX
 }
-```
 
-**Step 2: 渲染HTML**
-```bash
-python3 skills/report-generator/report_generator.py /tmp/report_input.json
-```
+# 2. 写入临时文件
+import json
+with open("/tmp/report_input.json", "w", encoding="utf-8") as f:
+    json.dump(report_data, f, ensure_ascii=False, indent=2)
 
-**Step 3: 部署到Cloudflare Pages**
-```bash
-python3 skills/cf-upload/cf_pages_deploy.py <生成的HTML文件路径>
+# 3. 渲染HTML（使用绝对路径）
+subprocess.run([
+    "python3",
+    "/Users/mac/.openclaw/agents/trading/skills/report-generator/report_generator.py",
+    "/tmp/report_input.json"
+])
+
+# 4. 部署到Cloudflare Pages
+subprocess.run([
+    "python3",
+    "/Users/mac/.openclaw/agents/trading/skills/cf-upload/cf_pages_deploy.py",
+    "<上面生成的HTML文件路径>"
+])
 ```
 
 **Step 4: 返回链接给用户**
