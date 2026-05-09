@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+    <!-- marked.js (Markdown渲染) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        trading: {
+                            bullish: '#22c55e',
+                            bearish: '#ef4444',
+                            neutral: '#eab308',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 隐藏thinking块 */
+        .thinking-block { display: none; }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+
+        /* 平滑滚动 */
+        html { scroll-behavior: smooth; }
+
+        /* Dashboard卡片悬浮效果 */
+        .dashboard-card {
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        /* 导航项高亮 */
+        .nav-item.active {
+            border-left: 3px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* K线图容器 */
+        #kline-chart { width: 100%; height: 400px; }
+        #fund-flow-chart { width: 100%; height: 300px; }
+
+        /* 打印样式 */
+        @media print {
+            .no-print { display: none !important; }
+            .sidebar { width: 0 !important; }
+            main { margin-left: 0 !important; }
+        }
+
+        /* 条件渲染：高分警告模式 */
+        .high-score-warning { background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); }
+        .risk-alert-banner { background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%); }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+
+    <!-- 顶部Banner（条件渲染） -->
+    {% if alert_type == 'risk' %}
+    <div class="risk-alert-banner text-white px-4 py-2 text-center font-bold no-print">
+        <span class="inline-flex items-center gap-2">
+            <i data-lucide="alert-triangle"></i>
+            风控预警：{{ alert_message }}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if score and score >= 85 %}
+    <div class="high-score-warning text-white px-4 py-2 text-center font-bold no-print">
+        <span class="inline-flex items-center gap-2">
+            <i data-lucide="zap"></i>
+            强烈推荐：高分机会，请关注入场时机
+        </span>
+    </div>
+    {% endif %}
+
+    <div class="flex">
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar w-64 bg-gray-800 min-h-screen fixed left-0 top-0 pt-4 no-print" style="overflow-y: auto; max-height: 100vh;">
+            <div class="px-4 mb-6">
+                <h1 class="text-xl font-bold text-blue-400">{{ title }}</h1>
+                <p class="text-xs text-gray-500 mt-1">{{ subtitle }}</p>
+            </div>
+
+            <nav class="px-2" id="toc-nav">
+                <!-- TOC由JS动态生成 -->
+            </nav>
+
+            <div class="absolute bottom-0 left-0 w-full p-4 border-t border-gray-700">
+                <div class="text-xs text-gray-500">
+                    <p>生成时间：{{ generated_at }}</p>
+                    <p class="mt-1">TradingAgent v2.0</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 ml-64 p-8" id="main-content">
+            <!-- Dashboard卡片区 -->
+            {% if dashboard %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {% for card in dashboard %}
+                <div class="dashboard-card bg-gray-800 rounded-xl p-5 border border-gray-700">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-400 text-sm">{{ card.label }}</span>
+                        <i data-lucide="{{ card.icon }}" class="w-4 h-4 text-gray-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold {{ card.value_class or 'text-white' }}">
+                        {{ card.value }}
+                    </div>
+                    {% if card.sub %}
+                    <div class="text-xs text-gray-500 mt-1">{{ card.sub }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- K线图区域（条件渲染） -->
+            {% if kline_data %}
+            <div class="bg-gray-800 rounded-xl p-6 mb-8 border border-gray-700">
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i data-lucide="trending-up" class="w-5 h-5 text-blue-400"></i>
+                    K线走势
+                </h3>
+                <div id="kline-chart"></div>
+            </div>
+            {% endif %}
+
+            <!-- 资金流图区域（条件渲染） -->
+            {% if fund_flow_data %}
+            <div class="bg-gray-800 rounded-xl p-6 mb-8 border border-gray-700">
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5 text-green-400"></i>
+                    资金流向
+                </h3>
+                <div id="fund-flow-chart"></div>
+            </div>
+            {% endif %}
+
+            <!-- Markdown内容区 -->
+            <article class="prose prose-invert prose-lg max-w-none" id="markdown-content">
+                <!-- 由marked.js渲染 -->
+            </article>
+        </main>
+    </div>
+
+    <script>
+        // 全局图表实例
+        let klineChart, fundFlowChart;
+
+        // 初始化图标
+        lucide.createIcons();
+
+        // 渲染Markdown内容
+        const markdownContent = {{ content_markdown | tojson }};
+        document.getElementById('markdown-content').innerHTML = marked.parse(markdownContent);
+
+        // 生成TOC
+        function generateTOC() {
+            const headings = document.querySelectorAll('#markdown-content h2, #markdown-content h3');
+            const nav = document.getElementById('toc-nav');
+
+            headings.forEach((h, i) => {
+                if (!h.id) h.id = 'section-' + i;
+                const level = h.tagName === 'H2' ? '' : 'ml-4 ';
+                const a = document.createElement('a');
+                a.href = '#' + h.id;
+                a.className = level + 'nav-item block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded transition-colors';
+                a.textContent = h.textContent;
+                nav.appendChild(a);
+            });
+        }
+        generateTOC();
+
+        // TOC滚动高亮
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    const id = entry.target.id;
+                    document.querySelector(`.nav-item[href="#${id}"]`)?.classList.add('active');
+                }
+            });
+        }, { rootMargin: '-20% 0px -80% 0px' });
+
+        document.querySelectorAll('#markdown-content h2, #markdown-content h3').forEach(h => observer.observe(h));
+
+        // 渲染K线图
+        {% if kline_data %}
+        klineChart = echarts.init(document.getElementById('kline-chart'));
+        const klineOption = {{ kline_data | tojson }};
+        klineChart.setOption(klineOption);
+        window.addEventListener('resize', () => klineChart.resize());
+        {% endif %}
+
+        // 渲染资金流图
+        {% if fund_flow_data %}
+        fundFlowChart = echarts.init(document.getElementById('fund-flow-chart'));
+        const fundFlowOption = {{ fund_flow_data | tojson }};
+        fundFlowChart.setOption(fundFlowOption);
+        window.addEventListener('resize', () => fundFlowChart.resize());
+        {% endif %}
+    </script>
+</body>
+</html>

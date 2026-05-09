@@ -1,0 +1,254 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.5.10",
+    "lastTouchedAt": "2026-05-10T00:00:00.000Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-03-23T16:36:10.739Z",
+    "lastRunVersion": "2026.3.13",
+    "lastRunCommand": "configure",
+    "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "minimax:global": {
+        "provider": "minimax",
+        "mode": "api_key"
+      },
+      "minimax:cn": {
+        "provider": "minimax",
+        "mode": "api_key"
+      }
+    }
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "minimax": {
+        "baseUrl": "https://api.minimaxi.com/anthropic",
+        "apiKey": "YOUR_MINIMAX_API_KEY",
+        "api": "anthropic-messages",
+        "authHeader": true,
+        "models": [
+          {
+            "id": "MiniMax-M2.5",
+            "name": "MiniMax M2.5",
+            "reasoning": true,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0.3,
+              "output": 1.2,
+              "cacheRead": 0.03,
+              "cacheWrite": 0.12
+            },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          },
+          {
+            "id": "MiniMax-M2.7-highspeed",
+            "name": "MiniMax M2.7-highspeed",
+            "reasoning": true,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0.4,
+              "output": 1.6,
+              "cacheRead": 0.04,
+              "cacheWrite": 0.16
+            },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          }
+        ]
+      },
+      "deepseek": {
+        "baseUrl": "https://api.deepseek.com/anthropic/v1",
+        "apiKey": "YOUR_DEEPSEEK_API_KEY",
+        "api": "anthropic-messages",
+        "authHeader": true,
+        "models": [
+          {
+            "id": "deepseek-v4-pro",
+            "name": "DeepSeek V4 Pro",
+            "reasoning": true,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0.5,
+              "output": 2,
+              "cacheRead": 0.05,
+              "cacheWrite": 0.2
+            },
+            "contextWindow": 128000,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "deepseek/deepseek-v4-pro",
+        "fallbacks": [
+          "minimax/MiniMax-M2.7-highspeed"
+        ]
+      },
+      "models": {
+        "minimax/MiniMax-M2.7-highspeed": {
+          "alias": "Minimax-M2.7-HS"
+        },
+        "deepseek/deepseek-v4-pro": {
+          "alias": "DeepSeek"
+        }
+      },
+      "workspace": "~/.openclaw/workspace",
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "subagents": {
+        "maxConcurrent": 10,
+        "runTimeoutSeconds": 600
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "model": "minimax/MiniMax-M2.7-highspeed"
+      },
+      {
+        "id": "desktop",
+        "name": "desktop",
+        "workspace": "~/.openclaw/agents/desktop",
+        "agentDir": "~/.openclaw/agents/desktop/agent"
+      },
+      {
+        "id": "trading",
+        "name": "trading",
+        "model": "deepseek/deepseek-v4-pro",
+        "workspace": "~/.openclaw/agents/trading",
+        "agentDir": "~/.openclaw/agents/trading/agent",
+        "heartbeat": {
+          "every": "30m",
+          "activeHours": {
+            "start": "09:30",
+            "end": "20:00"
+          },
+          "lightContext": true,
+          "includeReasoning": false
+        }
+      }
+    ]
+  },
+  "tools": {
+    "profile": "full",
+    "sessions": {
+      "visibility": "all"
+    }
+  },
+  "bindings": [
+    {
+      "type": "route",
+      "agentId": "desktop",
+      "match": {
+        "channel": "feishu",
+        "accountId": "desktop"
+      }
+    },
+    {
+      "type": "route",
+      "agentId": "trading",
+      "match": {
+        "channel": "feishu",
+        "accountId": "trading"
+      }
+    }
+  ],
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "channels": {
+    "wechat": {
+      "enabled": false
+    },
+    "openclaw-weixin": {
+      "channelConfigUpdatedAt": "2026-04-17T17:06:44.577Z"
+    },
+    "feishu": {
+      "appId": "YOUR_FEISHU_APP_ID",
+      "appSecret": "YOUR_FEISHU_APP_SECRET",
+      "enabled": true,
+      "accounts": {
+        "default": {
+          "enabled": true
+        },
+        "desktop": {
+          "appId": "YOUR_DESKTOP_FEISHU_APP_ID",
+          "appSecret": "YOUR_DESKTOP_FEISHU_APP_SECRET",
+          "enabled": true
+        },
+        "trading": {
+          "appId": "YOUR_TRADING_FEISHU_APP_ID",
+          "appSecret": "YOUR_TRADING_FEISHU_APP_SECRET",
+          "enabled": true
+        }
+      },
+      "streaming": true
+    }
+  },
+  "cron": {
+    "enabled": true,
+    "store": "~/.openclaw/cron/jobs.json",
+    "maxConcurrentRuns": 3
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "YOUR_GATEWAY_TOKEN"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    }
+  },
+  "plugins": {
+    "load": {
+      "paths": [
+        "~"
+      ]
+    },
+    "entries": {
+      "minimax": {
+        "enabled": true,
+        "config": {}
+      },
+      "memory-core": {
+        "config": {
+          "dreaming": {
+            "enabled": true
+          }
+        }
+      },
+      "deepseek": {
+        "enabled": true
+      },
+      "openclaw-weixin": {
+        "enabled": true
+      }
+    }
+  }
+}

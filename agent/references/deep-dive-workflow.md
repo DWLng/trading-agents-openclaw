@@ -1046,3 +1046,75 @@
 > **适用范围**: 具备完整财报的上市公司超级深度分析
 > **分析深度**: Level 1（基础画像）→ Level 2（标准拆解）→ Level 3（深度透视）→ Level 4（全景覆盖）
 > **建议复用方式**: 将本Markdown作为Prompt/技能文档，配合mx-skills + wencai-skills双引擎执行分析
+
+---
+
+## 附录C：K线图快速预览URL方案（东方财富接口）
+
+利用东方财富公开接口，无需数据获取和绘图代码，一行拼接生成带MACD的K线预览图。
+
+### 适用场景
+
+- 选股初筛阶段快速预览多只股票走势
+- 盘中监控时快速查看异动股K线
+- 表格/列表悬浮预览（PySide6/PyQt cellEntered事件）
+- 用户只需看图不想等待matplotlib完整渲染
+
+### 核心函数
+
+```python
+def get_stock_pic_url(code_str: str) -> str:
+    """
+    根据股票代码生成东方财富K线图（含MACD）的URL链接
+    :param code_str: 股票代码，支持 '600000' 或 '600000.SH' 格式
+    :return: 图片URL字符串，输入无效时返回空字符串
+    """
+    import pandas as pd
+    if not code_str or pd.isna(code_str):
+        return ""
+    code_str = str(code_str).strip()
+    if not code_str:
+        return ""
+
+    prefix = "0."
+    if code_str.endswith('.SH'):       # 上海证券交易所
+        prefix = "1."
+        code_str = code_str[:-3]
+    elif code_str.endswith('.SZ'):     # 深圳证券交易所
+        prefix = "0."
+        code_str = code_str[:-3]
+    elif code_str.endswith('.BJ'):     # 北京证券交易所
+        prefix = "0."
+        code_str = code_str[:-3]
+    else:
+        # 智能推断：沪市6/5开头，深市0/3开头
+        if code_str.startswith(('6', '5')):
+            prefix = "1."
+
+    url = (f"https://webquoteklinepic.eastmoney.com/GetPic.aspx?"
+           f"nid={prefix}{code_str}&type=&unitWidth=-6&ef=&formula=MACD&AT=1&imageType=KXL")
+    return url
+```
+
+### URL参数说明
+
+| 参数 | 含义 | 可选值 |
+|------|------|--------|
+| `nid` | 市场前缀+代码 | `1.600000`（沪）、`0.000001`（深） |
+| `formula` | 技术指标 | `MACD`（默认）、`KDJ`、空 |
+| `imageType` | 图表类型 | `KXL`（K线图） |
+| `unitWidth` | K线宽度 | `-6`（自适应） |
+
+### 示例
+
+```python
+print(get_stock_pic_url("600000.SH"))  # 浦发银行
+print(get_stock_pic_url("000001"))     # 平安银行
+print(get_stock_pic_url("688981"))     # 科创板股票
+```
+
+### 注意事项
+
+- 需联网调用，图片由东方财富服务器实时渲染
+- 深色背景图片，不支持自定义配色
+- 仅供快速预览，正式报告仍使用matplotlib/mplfinance生成高质量图表

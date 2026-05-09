@@ -2,8 +2,8 @@
 
 ## 基础信息
 
-- **Name:** [Your Name]
-- **What to call them:** [What to call]
+- **Name:** mac
+- **What to call them:** 老板
 - **Timezone:** Asia/Shanghai
 
 ## 用户上下文

@@ -2,9 +2,11 @@
 
 A股 AI 投研分析系统 — 集成东方财富妙想数据源 + TradingAgents 多智能体框架。
 
-支持两大核心能力：
+支持四大核心能力：
 1. **每日自主选股**（mx-xuangu 多因子筛选 → LLM 研判 → mx-moni 模拟建仓 → 推送飞书）
-2. **个股深度分析**（12个Agent协作：技术面→情绪面→新闻面→基本面→多空辩论→风控→决策）
+2. **个股深度分析**（13维度深度分析 + HTML专业报告）
+3. **每日复盘进化**（Dreaming自动处理认知偏见）
+4. **盘中持仓监控**（心跳机制实时预警）
 
 数据源优先级：妙想 mx-skills（东方财富）→ AkShare → yfinance
 
@@ -17,15 +19,18 @@ A股 AI 投研分析系统 — 集成东方财富妙想数据源 + TradingAgents
 | `SOUL.md` | 认知核心：三大准则（证据优先、概率思维、认知谦逊）、张力仲裁、风险节奏 |
 | `USER.md` | 用户画像：高风险偏好、纯右侧交易、超短线（1-3天持有） |
 | `IDENTITY.md` | 身份矩阵：六大面具（猎人/解剖师/会计/战略家/守夜人/学徒） |
-| `AGENTS.md` | 操作手册：每日选股、个股分析、每日复盘、持仓监控四大能力 |
+| `AGENTS.md` | 操作手册：四大能力 + 双引擎数据系统 + Cloudflare Pages部署 |
 | `TOOLS.md` | 工具调用：MX Skills（东方财富）+ 文财 Skills 双引擎 |
-| `HEARTBEAT.md` | 心跳调度：15:30选股、16:00复盘、9:30持仓监控 |
-| `BOOTSTRAP.md` | 启动协议：五大意图类型识别、风格校准 |
-| `METACOGNITION.md` | 元认知：五种认知状态（常规/探索/危机/反思/创新） |
+| `HEARTBEAT.md` | 心跳调度：六任务优先级矩阵（选股/复盘/监控/维护/简报） |
+| `BOOTSTRAP.md` | 启动协议：五大意图类型识别 + Dreaming状态查询 |
+| `METACOGNITION.md` | 元认知：五种认知状态（现由OpenClaw Dreaming自动处理） |
 | `ADAPTIVE_CONSTRAINTS.md` | 自适应约束：五级约束谱系（严格↔宽松） |
 | `FAILURE_PROTOCOL.md` | 故障协议：四级故障体系、双引擎降级链 |
 
-完整分析流程参考 `agent/references/deep-dive-workflow.md`（十三维度深度分析框架）。
+完整分析流程参考：
+- `agent/references/deep-dive-workflow.md`（十三维度深度分析框架）
+- `agent/references/super-deep-research-workflow.md`（超级深度调研六段式框架）
+- `agent/references/analysis-method.md`（六维快速分析 + System 2思考）
 
 ## 系统架构
 
@@ -73,20 +78,33 @@ trading-agents-openclaw/
 │   ├── IDENTITY.md             # 身份矩阵：六大面具、四层认知
 │   ├── AGENTS.md               # 操作手册：四大能力、双引擎数据系统
 │   ├── TOOLS.md                # 工具调用指南：MX Skills + 文财 Skills
-│   ├── HEARTBEAT.md            # 心跳调度：选股/复盘/监控任务节律
-│   ├── BOOTSTRAP.md            # 启动协议：五大意图识别、风格校准
-│   ├── METACOGNITION.md        # 元认知：五种认知状态、模式识别
+│   ├── HEARTBEAT.md            # 心跳调度：六任务优先级矩阵
+│   ├── BOOTSTRAP.md            # 启动协议：五大意图识别、Dreaming状态
+│   ├── METACOGNITION.md        # 元认知：五种认知状态
 │   ├── ADAPTIVE_CONSTRAINTS.md # 自适应约束：五级约束谱系
 │   ├── FAILURE_PROTOCOL.md     # 故障协议：四级故障体系、双引擎降级
 │   ├── memory/                 # Agent 记忆存储
 │   │   └── README.md          # 记忆文件说明
+│   ├── skills/                 # Agent 专属 Skills
+│   │   ├── report-generator/   # Jinja2 HTML报告生成器
+│   │   │   ├── template.html   # 专业HTML模板（Tailwind+ECharts）
+│   │   │   ├── report_generator.py
+│   │   │   └── SKILL.md
+│   │   ├── cf-upload/         # Cloudflare Pages部署
+│   │   │   ├── cf_pages_deploy.py
+│   │   │   └── SKILL.md
+│   │   ├── oss-upload/         # 阿里云OSS上传（已废弃）
+│   │   │   ├── oss_upload.py
+│   │   │   └── SKILL.md
+│   │   └── feishu-doc.sh       # 飞书文档推送脚本
 │   └── references/
-│       ├── analysis-method.md  # 六维快速分析框架
-│       └── deep-dive-workflow.md  # 十三维度深度分析框架
+│       ├── analysis-method.md      # 六维快速分析 + System 2思考
+│       ├── deep-dive-workflow.md   # 十三维度深度分析框架
+│       └── super-deep-research-workflow.md  # 超级深度调研框架
 ├── scripts/                   # 本地数据管理脚本
 │   ├── bulk_download.py       # A股历史数据批量下载（baostock）
 │   ├── daily_update.py        # 每日增量更新（收盘后）
-│   ├── incremental_update.py   # 增量更新脚本
+│   ├── incremental_update.py  # 增量更新脚本
 │   ├── local_data_loader.py   # 本地数据加载器
 │   └── query_local.py         # 本地数据查询
 ├── data/                      # 本地数据存储
@@ -95,33 +113,35 @@ trading-agents-openclaw/
 │   └── README.md              # 报告格式说明
 ├── skills-lock.json           # Skill 版本锁定
 ├── trading-agents/           # TradingAgents 核心分析
-│   ├── SKILL.md             # Skill 配置说明
+│   ├── SKILL.md              # Skill 配置说明
 │   ├── scripts/
-│   │   ├── run_analysis.py  # 主执行脚本
+│   │   ├── run_analysis.py   # 主执行脚本
 │   │   ├── mx_integration.py # 妙想数据集成
 │   │   ├── feishu_doc_client.py    # 飞书文档 API
-│   │   ├── feishu_doc_manager.py  # 文档管理器
-│   │   └── report_generator.py    # 报告生成器
+│   │   ├── feishu_doc_manager.py   # 文档管理器
+│   │   └── report_generator.py     # 报告生成器
 │   └── data/
-│       └── doc_registry.json      # 股票-文档映射
-├── mx-skills/               # 妙想 Skills
-│   ├── mx-data/             # 行情/财务数据查询
+│       └── doc_registry.json       # 股票-文档映射
+├── mx-skills/                # 妙想 Skills
+│   ├── mx-data/              # 行情/财务数据查询
 │   │   ├── SKILL.md
 │   │   └── mx_data.py
-│   ├── mx-search/           # 资讯/新闻搜索
+│   ├── mx-search/            # 资讯/新闻搜索
 │   │   ├── SKILL.md
 │   │   └── mx_search.py
-│   ├── mx-xuangu/           # 智能选股
+│   ├── mx-xuangu/            # 智能选股
 │   │   ├── SKILL.md
 │   │   └── mx_xuangu.py
-│   ├── mx-zixuan/           # 自选股管理
+│   ├── mx-zixuan/            # 自选股管理
 │   │   ├── SKILL.md
 │   │   └── mx_zixuan.py
-│   ├── mx-moni/             # 模拟交易
+│   ├── mx-moni/              # 模拟交易
 │   │   ├── SKILL.md
 │   │   └── mx_moni.py
-│   └── mx-run.sh            # 统一调用 wrapper
-├── .env.example             # 环境变量模板
+│   └── mx-run.sh             # 统一调用 wrapper
+├── openclaw.json             # OpenClaw 全局配置（心跳/cron/模型）
+├── .env.example              # 环境变量模板（已脱敏）
+├── CHANGELOG.md              # 更新日志
 ├── .gitignore               # Git 忽略配置
 └── README.md
 ```
@@ -136,24 +156,29 @@ cd ~/TradingAgents-Kimi
 pip install -e .
 ```
 
-### 2. 获取 API Keys
+### 2. 配置环境变量
 
-#### 妙想 MX API Key
-1. 前往 [东方财富妙想 Skills](https://dl.dfcfs.com/m/itc4) 获取 API Key
-2. 设置环境变量：
-   ```bash
-   export MX_APIKEY="your_mx_apikey_here"
-   ```
+复制 `.env.example` 为 `.env` 并填入实际值：
 
-#### MiniMax API Key（TradingAgents LLM 驱动）
 ```bash
-export MINIMAX_API_KEY="your_minimax_key"
+cp .env.example .env
+# 编辑 .env 填入你的 API Keys
 ```
+
+主要必需配置：
+| 变量 | 说明 |
+|------|------|
+| `MINIMAX_API_KEY` | MiniMax API Key（TradingAgents LLM驱动） |
+| `DEEPSEEK_API_KEY` | DeepSeek API Key（可选） |
+| `MX_APIKEY` | 东方财富妙想 API Key |
+| `FEISHU_APP_ID` | 飞书应用 App ID |
+| `FEISHU_APP_SECRET` | 飞书应用 App Secret |
 
 ### 3. 安装依赖
 
 ```bash
-pip install pandas requests openpyxl
+pip install pandas requests openpyxl jinja2
+npm install -g wrangler  # Cloudflare Pages部署用
 ```
 
 ## 快速开始
@@ -209,11 +234,37 @@ python run_analysis.py --ticker 贵州茅台 --output-mode feishu-doc
 # 飞书消息模式：直接发送 Markdown 摘要
 python run_analysis.py --ticker 贵州茅台 --output-mode feishu-msg
 
+# HTML报告模式：生成专业HTML报告并上传Cloudflare Pages
+python run_analysis.py --ticker 贵州茅台 --output-mode html
+
 # JSON 模式：获取结构化数据
 python run_analysis.py --ticker 贵州茅台 --output-mode json
 
 # 原始文本模式：仅最终决策
 python run_analysis.py --ticker 贵州茅台 --output-mode raw
+```
+
+### HTML报告特性
+
+生成的HTML报告包含：
+- **Tailwind CSS v4** - 专业响应式设计
+- **ECharts 5** - 交互式图表（K线、成交量、MACD等）
+- **左侧导航栏** - 快速跳转各分析章节
+- **卡片式Dashboard** - 核心指标一目了然
+- **条件渲染** - 高分警告、风险提示自动显示
+- **东方财富K线图** - 直接嵌入实时行情
+
+### Cloudflare Pages部署
+
+```bash
+# 初始化Cloudflare Pages项目
+npx wrangler pages project create trading-reports
+
+# 配置API Token（用于CI/CD）
+# 从 https://dash.cloudflare.com/profile/api-tokens 获取
+
+# 部署HTML报告
+python3 agent/skills/cf-upload/cf_pages_deploy.py <html文件>
 ```
 
 ## MX Skills 详解
@@ -230,12 +281,17 @@ python run_analysis.py --ticker 贵州茅台 --output-mode raw
 
 ### 环境变量
 
+详细配置请参考 `.env.example`，主要变量：
+
 | 变量 | 必填 | 说明 |
 |------|------|------|
 | `MX_APIKEY` | 是 | 东方财富妙想 API Key |
 | `MINIMAX_API_KEY` | 是 | MiniMax API Key（TradingAgents 用） |
-| `TRADINGAGENTS_PROJECT` | 否 | TradingAgents 项目路径，默认 `~/TradingAgents-Kimi` |
-| `MX_OUTPUT_DIR` | 否 | MX Skills 输出目录，默认 `~/.openclaw/workspace/mx_data/output` |
+| `DEEPSEEK_API_KEY` | 否 | DeepSeek API Key |
+| `FEISHU_APP_ID` | 是 | 飞书应用 App ID |
+| `FEISHU_APP_SECRET` | 是 | 飞书应用 App Secret |
+| `CF_API_TOKEN` | 否 | Cloudflare API Token（HTML部署用） |
+| `OSS_ACCESS_KEY_ID` | 否 | 阿里云OSS AccessKey（已废弃） |
 
 ### 飞书集成
 
@@ -243,7 +299,32 @@ python run_analysis.py --ticker 贵州茅台 --output-mode raw
 
 1. 在[飞书开放平台](https://open.feishu.cn/)创建应用
 2. 获取 `App ID` 和 `App Secret`
-3. 配置到 OpenClaw 或直接修改 `feishu_doc_client.py` 中的凭据
+3. 填入 `.env` 文件
+
+### Heartbeat心跳机制
+
+Agent默认每30分钟心跳一次，活跃时段9:30-20:00。可用命令：
+
+| 命令 | 说明 |
+|------|------|
+| `Dreaming状态` | 查询Dreaming记忆整理状态 |
+| `今天选什么股` | 立即执行选股 |
+| `分析 XXX` | 深度分析个股 |
+| `我的持仓` | 查询模拟持仓 |
+
+## 定时任务（Cron Jobs）
+
+Agent自动执行以下定时任务：
+
+| 任务 | 触发时间 | 说明 |
+|------|---------|------|
+| 早间简报 | 07:30 | 财经简报，覆盖前日23:30至当日07:30 |
+| 午间简报 | 12:00 | 上午市场走势简报 |
+| 下午简报 | 15:15 | 午盘交易时段简报 |
+| 收盘选股 | 15:30 | 四维度筛选优质股票 |
+| 每日复盘 | 16:00 | 对比持仓表现与选股推荐 |
+| 晚间简报 | 23:45 | 全球市场动态综述 |
+| 记忆Dreaming | 03:00 | 自动记忆整理和沉淀 |
 
 ## 成本控制
 

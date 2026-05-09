@@ -43,7 +43,7 @@ bash ~/.openclaw/agents/trading/skills/mx-run.sh <skill> "<query>"
 **环境变量**（必须配置在shell profile中）：
 ```bash
 IWENCAI_BASE_URL=https://openapi.iwencai.com
-IWENCAI_API_KEY=YOUR_WENCAI_API_KEY
+IWENCAI_API_KEY=sk-proj-00-KI9c2saEjmSFLrBDjNPHwOzxNwrgbC_DNmXZ4rHpgKH5nhN0FcBBbWwtqNTf7am-1lJE6MaTVZshvcAIsPKx7qblj77P1GR_qy0tmysYiebLdTGBSvAlcLzkpWxDneYlPNTIXw
 ```
 
 **安装步骤**：
@@ -291,7 +291,7 @@ MX_API_URL="https://mkapi2.dfcfs.com/finskillshub"
 
 # wencai-skills（同花顺问财）
 IWENCAI_BASE_URL="https://openapi.iwencai.com"
-IWENCAI_API_KEY="YOUR_WENCAI_API_KEY"
+IWENCAI_API_KEY="sk-proj-00-KI9c2saEjmSFLrBDjNPHwOzxNwrgbC_DNmXZ4rHpgKH5nhN0FcBBbWwtqNTf7am-1lJE6MaTVZshvcAIsPKx7qblj77P1GR_qy0tmysYiebLdTGBSvAlcLzkpWxDneYlPNTIXw"
 ```
 
 ---
