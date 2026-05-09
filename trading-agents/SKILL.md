@@ -154,19 +154,6 @@ python3 scripts/run_analysis.py \
 5. 建议参数调整
 6. 更新 memory/strategy-params.md
 
-## 成本控制
-
-| 操作 | Token 消耗 | 频率 |
-|------|-----------|------|
-| 选股研判 | ~20K tokens | 每日1次 |
-| 个股深度分析 | ~87K tokens | 按需 |
-| 复盘分析 | ~15K tokens | 每日1次 |
-
-降本方式：
-- 选股用轻量模型（MiniMax-M2.5）
-- 深度分析用标准模型（MiniMax-M2.7-highspeed）
-- 减少 TradingAgents 辩论轮次
-
 ## 完整日志
 
 每次分析保存到: `~/.tradingagents/logs/{ticker}/`

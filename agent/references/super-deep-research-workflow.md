@@ -21,7 +21,7 @@
 | 盘中快速决策（5分钟内） | analysis-method.md 六维快速分析 |
 | 日常深度分析（4-12小时） | deep-dive-workflow.md 13维度 |
 | 超级深度调研（15-25小时） | 本工作流 超级融合 |
-| 选股报告 | HTML报告（OSS链接）|
+| 选股报告 | HTML报告（Cloudflare Pages链接）|
 
 ### 1.3 输出格式说明
 
@@ -362,7 +362,7 @@
          ↓
     同时输出：
     - 飞书文档链接
-    - HTML报告OSS链接
+    - HTML报告Cloudflare Pages链接
 ```
 
 ---

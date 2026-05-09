@@ -1118,3 +1118,81 @@ print(get_stock_pic_url("688981"))     # 科创板股票
 - 需联网调用，图片由东方财富服务器实时渲染
 - 深色背景图片，不支持自定义配色
 - 仅供快速预览，正式报告仍使用matplotlib/mplfinance生成高质量图表
+
+---
+
+## 十、HTML报告生成与发布流程
+
+### 10.1 报告生成架构
+
+本框架支持生成专业HTML报告，架构如下：
+
+```
+Agent输出 Markdown/JSON
+        ↓
+report-generator.py 渲染
+        ↓
+完美HTML报告
+        ↓
+cf_pages_deploy.py 部署到 Cloudflare Pages
+        ↓
+分享链接给用户
+```
+
+### 10.2 调用流程
+
+在分析完成后，按照以下流程生成HTML报告：
+
+**Step 1: 准备数据**
+```python
+report_data = {
+    "title": "{股票名称}({代码}) 深度分析",
+    "subtitle": "分析日期：YYYY-MM-DD | 分析深度：Level X",
+    "content_markdown": markdown_content,
+    "dashboard": [
+        {"label": "综合评分", "value": "XX分", "icon": "star", "value_class": "text-blue-400"},
+        {"label": "目标价", "value": "XX元", "icon": "target", "value_class": "text-green-400"},
+        {"label": "止损位", "value": "XX元", "icon": "shield", "value_class": "text-red-400"}
+    ],
+    "score": XX
+}
+```
+
+**Step 2: 渲染HTML**
+```bash
+python3 skills/report-generator/report_generator.py /tmp/report_input.json
+```
+
+**Step 3: 部署到Cloudflare Pages**
+```bash
+python3 skills/cf-upload/cf_pages_deploy.py <生成的HTML文件路径>
+```
+
+**Step 4: 返回链接给用户**
+```
+📊 深度分析报告已生成
+
+{股票名称} {分析日期}
+
+🔗 网页版深度研报: https://xxx.trading-reports.pages.dev/{文件名}.html
+```
+
+### 10.3 HTML报告特性
+
+| 特性 | 说明 |
+|------|------|
+| Tailwind CSS v4 | CDN引入，自动暗黑模式，响应式布局 |
+| ECharts 5 | 支持K线图、资金流图动态交互 |
+| 左侧导航栏 | 自动生成TOC，点击平滑滚动 |
+| Dashboard卡片 | 顶部4格关键指标卡片 |
+| 条件渲染 | 高分警告、风控Banner |
+| 东方财富K线图 | 直接嵌入实时行情URL |
+
+### 10.4 报告存储位置
+
+| 类型 | 存储位置 |
+|------|----------|
+| 选股日报 | `memory/reports/{YYYY-MM-DD}_选股日报.html` |
+| 个股深度分析 | `memory/reports/{代码}_{股票名}_深度分析_{YYYYMMDD}.html` |
+| 快速分析 | `memory/reports/{代码}_{股票名}_快速分析_{YYYYMMDD}.html` |
+| 复盘报告 | `memory/reports/{YYYY-MM-DD}_复盘报告.html` |

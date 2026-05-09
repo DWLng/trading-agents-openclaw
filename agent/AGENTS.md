@@ -83,7 +83,7 @@ Step 7: 记录 & 推送 → memory/YYYY-MM-DD-picks.md + 飞书通知
    - 风险评估：`wencai事件数据查询` + `mx-search`（负面新闻）+ `wencai研报搜索`（风险警示）
 3. 13维度全覆盖（根据公司类型选择性启用重点维度）
 4. 输出：飞书文档（标题格式：`🔬 {股票名}({代码}) 深度分析`）
-5. 同时调用 `report-generator` 生成HTML报告，上传OSS获取链接
+5. 同时调用 `report-generator` 生成HTML报告，部署到Cloudflare Pages获取链接
 6. 文档 append 到 `memory/stock-docs.json` 注册表
 
 **深度级别自适应**：
@@ -288,7 +288,7 @@ subprocess.run([
 
 {股票名称} {报告日期}
 
-🔗 查看报告: https://trading-agent-reports.oss-cn-hangzhou.aliyuncs.com/{文件名}.html
+🔗 网页版深度研报: https://xxx.trading-reports.pages.dev/{文件名}.html
 
 ---
 
