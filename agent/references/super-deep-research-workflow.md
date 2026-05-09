@@ -269,7 +269,7 @@
 
 **交付物**：
 - 飞书文档链接
-- HTML报告OSS链接：`memory/reports/{股票代码}_{日期}/超级深度调研报告.html`
+- HTML报告Cloudflare Pages链接：`memory/reports/{股票代码}_{日期}/超级深度调研报告.html`
 
 ---
 
@@ -369,7 +369,7 @@
 
 ## 五、输出方案
 
-**主方案**：OSS + HTML（已配置）
+**主方案**：Cloudflare Pages（已配置）
 - 使用 `report-generator` skill 生成HTML
 - 使用 `cf-upload` skill 部署到 Cloudflare Pages
 - 生成分享链接发送给用户

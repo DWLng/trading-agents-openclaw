@@ -288,7 +288,7 @@ subprocess.run([
 
 {股票名称} {报告日期}
 
-🔗 网页版深度研报: https://xxx.trading-reports.pages.dev/{文件名}.html
+🔗 网页版研报: https://xxx.trading-reports.pages.dev/{文件名}.html
 
 ---
 
