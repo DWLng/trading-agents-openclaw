@@ -1,0 +1,30 @@
+--- lark-orig/package/src/messaging/inbound/dispatch-context.js	1985-10-26 16:15:00
++++ lark-patched/dispatch-context.js	2026-05-10 15:19:59
+@@ -80,8 +80,17 @@
+         tags.push(`${ctx.resources.length} attachment(s)`);
+     }
+     const tagStr = tags.length > 0 ? ` [${tags.join(', ')}]` : '';
++
++    // ---- Session isolation: append chat_id prefix for group chats ----
++    // This creates physically isolated sessions per chat group while preserving
++    // the original session key structure: {agentId}:{userId} becomes {agentId}:{chatId}:{userId}
++    const originalSessionKey = route.sessionKey;
++    const isolatedSessionKey = isGroup
++        ? `${originalSessionKey.split(':')[0]}:${ctx.chatId}:${ctx.senderId}`
++        : originalSessionKey;
++
+     core.system.enqueueSystemEvent(`Feishu[${account.accountId}] ${location} | ${sender}${tagStr}`, {
+-        sessionKey: route.sessionKey,
++        sessionKey: isolatedSessionKey,
+         contextKey: `feishu:message:${ctx.chatId}:${ctx.messageId}`,
+     });
+     return {
+@@ -99,6 +108,8 @@
+         envelopeFrom,
+         envelopeOptions,
+         route,
++        // Pass chat_id through for group-aware behavior in agent layer
++        chatIdForBehavior: isGroup ? ctx.chatId : undefined,
+         threadSessionKey: undefined,
+         commandAuthorized: params.commandAuthorized,
+     };
