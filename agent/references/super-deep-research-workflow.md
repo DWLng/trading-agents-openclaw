@@ -253,6 +253,7 @@
 {
     "title": "{股票名称}({代码}) 超级深度调研报告",
     "subtitle": "{日期}",
+    "stock_code": "{仅保留6位纯数字股票代码，例如 603986}",
     "content_markdown": "<!-- 完整报告内容 -->",
     "dashboard": [
         {"label": "目标价", "value": "{目标价}元", "icon": "target", "value_class": "text-green-400"},
@@ -260,19 +261,18 @@
         {"label": "综合评级", "value": "{评级}", "icon": "star", "value_class": "text-blue-400"},
         {"label": "预期涨幅", "value": "{涨幅}%", "icon": "trending-up", "value_class": "text-green-400"}
     ],
-    "kline_data": {
-        "xAxis": {"data": ["2026-04-01", "2026-04-02", ...]},
-        "series": [{"type": "candlestick", "data": [[开盘, 收盘, 最低, 最高], ...]}]
-    },
-    "fund_flow_data": {
-        "xAxis": {"data": ["5/4", "5/5", "5/6", "5/7", "5/8"]},
-        "series": [{"type": "bar", "name": "主力净流入", "data": [...]}]
-    },
+    "kline_data": null,
+    "fund_flow_data": null,
     "score": {评分}
 }
 ```
 
-⚠️ **重要**：必须提取真实数据填充 `kline_data` 和 `fund_flow_data`，禁止输出 null！
+**重要更新**：现在只需要提供 `stock_code`（6位纯数字股票代码），Python会自动从本地数据源获取K线数据。**不要**尝试在JSON中手动填充 `kline_data` 和 `fund_flow_data`——LLM生成的数据不准确。
+
+**数据获取策略**：
+1. **优先本地数据**：从 `~/.openclaw/agents/trading/data/daily_kline/` 读取parquet文件
+2. **补充mx-data API**：若本地数据缺失或超过7天未更新，调用mx-data API补充
+3. **数据格式**：支持上海(sh_)、深圳(sz_)、北京(bj_)市场的parquet文件
 
 **交付物**：
 - HTML报告本地文件：`memory/reports/{股票代码}_{日期}/超级深度调研报告.html`
@@ -317,8 +317,8 @@
 ### Task 5 必过项
 - [ ] HTML报告生成成功（使用report-generator）
 - [ ] JSON数据可被Jinja2模板正确渲染
-- [ ] kline_data 必须包含真实K线数据
-- [ ] fund_flow_data 必须包含真实资金流数据
+- [ ] stock_code 必须提供6位纯数字代码（如 603986）
+- [ ] Python自动从本地数据源获取K线数据
 - [ ] 尝试部署到Cloudflare Pages
 - [ ] **Cloudflare部署失败时**：直接发送HTML文件给用户
 
@@ -400,6 +400,7 @@ HTML报告生成（必须执行）
 report_data = {
     "title": "{股票名称}({代码}) 超级深度调研",
     "subtitle": "分析日期：YYYY-MM-DD | 分析深度：Level 4",
+    "stock_code": "600519",  # 6位纯数字股票代码，Python会自动获取K线数据
     "content_markdown": markdown_content,  # 完整研究报告
     "dashboard": [
         {"label": "综合评分", "value": "XX分", "icon": "star", "value_class": "text-blue-400"},

@@ -3,7 +3,7 @@
     "oc_072f5b2b936407909562858feab7dd8e": {
       "name": "深度调研群",
       "sessionSuffix": "_deep",
-      "thinkingDepth": "high",
+      "thinkingDepth": "xhigh",
       "memoryStrategy": "compact_after_task",
       "model": "deepseek/deepseek-v4-pro",
       "autoCompactBeforeTask": true,
@@ -12,9 +12,9 @@
     "oc_04a9e1b9c5efe458e3f146c621c7be2f": {
       "name": "选股群",
       "sessionSuffix": "_pick",
-      "thinkingDepth": "auto",
+      "thinkingDepth": "xhigh",
       "memoryStrategy": "retain_daily",
-      "model": "xiaomi-coding/mimo-v2.5-pro",
+      "model": "deepseek/deepseek-v4-pro",
       "autoCompactBeforeTask": false,
       "autoCompactDaily": true,
       "description": "选股+复盘，长记忆保留，晚间统一compact"
@@ -22,9 +22,9 @@
     "oc_0b2b44783573f9cb32afccec305ac0ba": {
       "name": "盘中群",
       "sessionSuffix": "_quick",
-      "thinkingDepth": "minimum",
+      "thinkingDepth": "medium",
       "memoryStrategy": "retain_day",
-      "model": "xiaomi-coding/mimo-v2.5",
+      "model": "deepseek/deepseek-v4-pro",
       "autoCompactBeforeTask": false,
       "description": "实时响应，数据优先，当日有效"
     }

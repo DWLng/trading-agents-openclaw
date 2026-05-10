@@ -1,12 +1,12 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.5.10",
-    "lastTouchedAt": "2026-05-10T06:00:00.000Z"
+    "lastTouchedVersion": "2026.5.7",
+    "lastTouchedAt": "2026-05-10T08:30:00.000Z"
   },
   "wizard": {
-    "lastRunAt": "2026-03-23T16:36:10.739Z",
-    "lastRunVersion": "2026.3.13",
-    "lastRunCommand": "configure",
+    "lastRunAt": "2026-05-10T07:36:33.632Z",
+    "lastRunVersion": "2026.5.7",
+    "lastRunCommand": "doctor",
     "lastRunMode": "local"
   },
   "models": {
@@ -72,37 +72,8 @@
               "cacheRead": 0.05,
               "cacheWrite": 0.2
             },
-            "contextWindow": 128000,
-            "maxTokens": 8192
-          }
-        ]
-      },
-      "xiaomi-coding": {
-        "baseUrl": "https://token-plan-cn.xiaomimimo.com/anthropic",
-        "apiKey": "YOUR_XIAOMI_MIMO_API_KEY",
-        "api": "anthropic-messages",
-        "authHeader": true,
-        "models": [
-          {
-            "id": "mimo-v2.5-pro",
-            "name": "mimo-v2.5-pro",
-            "reasoning": true,
-            "input": [
-              "text"
-            ],
             "contextWindow": 1048576,
-            "maxTokens": 32000
-          },
-          {
-            "id": "mimo-v2.5",
-            "name": "mimo-v2.5",
-            "reasoning": true,
-            "input": [
-              "text",
-              "image"
-            ],
-            "contextWindow": 1048576,
-            "maxTokens": 32000
+            "maxTokens": 32768
           }
         ]
       }
@@ -111,15 +82,12 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "xiaomi-coding/mimo-v2.5-pro",
+        "primary": "deepseek/deepseek-v4-pro",
         "fallbacks": [
-          "deepseek/deepseek-v4-pro",
           "minimax/MiniMax-M2.7-highspeed"
         ]
       },
       "models": {
-        "xiaomi-coding/mimo-v2.5-pro": {},
-        "xiaomi-coding/mimo-v2.5": {},
         "minimax/MiniMax-M2.7-highspeed": {
           "alias": "Minimax-M2.7-HS"
         },
@@ -139,7 +107,7 @@
     "list": [
       {
         "id": "main",
-        "model": "xiaomi-coding/mimo-v2.5-pro"
+        "model": "deepseek/deepseek-v4-pro"
       },
       {
         "id": "desktop",
@@ -150,7 +118,7 @@
       {
         "id": "trading",
         "name": "trading",
-        "model": "xiaomi-coding/mimo-v2.5-pro",
+        "model": "deepseek/deepseek-v4-pro",
         "workspace": "/Users/mac/.openclaw/agents/trading",
         "agentDir": "/Users/mac/.openclaw/agents/trading/agent",
         "heartbeat": {
@@ -159,7 +127,7 @@
             "start": "09:30",
             "end": "20:00"
           },
-          "lightContext": true,
+          "lightContext": false,
           "includeReasoning": false
         }
       }
@@ -202,13 +170,11 @@
     "wechat": {
       "enabled": false
     },
-    "openclaw-weixin": {
-      "channelConfigUpdatedAt": "2026-04-17T17:06:44.577Z"
-    },
     "feishu": {
-      "appId": "YOUR_FEISHU_APP_ID",
-      "appSecret": "YOUR_FEISHU_APP_SECRET",
+      "appId": "cli_a9271e3047f85bb6",
+      "appSecret": "zltxJXRWNIhDBhFJaCil9gkwrWNDH5QP",
       "enabled": true,
+      "groupSessionScope": "group_sender",
       "accounts": {
         "default": {
           "enabled": true
@@ -219,8 +185,20 @@
           "enabled": true
         },
         "trading": {
-          "appId": "YOUR_TRADING_FEISHU_APP_ID",
-          "appSecret": "YOUR_TRADING_FEISHU_APP_SECRET",
+          "appId": "cli_a9271e3047f85bb6",
+          "appSecret": "zltxJXRWNIhDBhFJaCil9gkwrWNDH5QP",
+          "enabled": true,
+          "groupSessionScope": "group_sender"
+        }
+      },
+      "groups": {
+        "oc_072f5b2b936407909562858feab7dd8e": {
+          "enabled": true
+        },
+        "oc_04a9e1b9c5efe458e3f146c621c7be2f": {
+          "enabled": true
+        },
+        "oc_0b2b44783573f9cb32afccec305ac0ba": {
           "enabled": true
         }
       },
@@ -261,15 +239,73 @@
           "dreaming": {
             "enabled": true
           }
-        }
+        },
+        "enabled": true
       },
       "deepseek": {
         "enabled": true
       },
-      "openclaw-weixin": {
-        "enabled": true
-      },
       "feishu": {
+        "enabled": true
+      }
+    }
+  },
+  "messages": {
+    "groupChat": {
+      "visibleReplies": "message_tool"
+    }
+  },
+  "skills": {
+    "entries": {
+      "blucli": {
+        "enabled": false
+      },
+      "bluebubbles": {
+        "enabled": false
+      },
+      "camsnap": {
+        "enabled": false
+      },
+      "coding-agent": {
+        "enabled": false
+      },
+      "discord": {
+        "enabled": false
+      },
+      "feishu-file-sender": {
+        "enabled": false
+      },
+      "goplaces": {
+        "enabled": false
+      },
+      "model-usage": {
+        "enabled": false
+      },
+      "notion": {
+        "enabled": false
+      },
+      "openai-whisper-api": {
+        "enabled": false
+      },
+      "sag": {
+        "enabled": false
+      },
+      "sherpa-onnx-tts": {
+        "enabled": false
+      },
+      "slack": {
+        "enabled": false
+      },
+      "spotify-player": {
+        "enabled": false
+      },
+      "summarize": {
+        "enabled": false
+      },
+      "trello": {
+        "enabled": false
+      },
+      "voice-call": {
         "enabled": false
       }
     }
