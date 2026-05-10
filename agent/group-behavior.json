@@ -4,29 +4,29 @@
       "name": "深度调研群",
       "sessionSuffix": "_deep",
       "thinkingDepth": "xhigh",
-      "memoryStrategy": "compact_after_task",
       "model": "deepseek/deepseek-v4-pro",
+      "memoryStrategy": "compact_after_task",
       "autoCompactBeforeTask": true,
-      "description": "穷尽式分析，每次任务前compact"
+      "description": "穷尽式分析，每次任务前compact，思考深度max"
     },
     "oc_04a9e1b9c5efe458e3f146c621c7be2f": {
       "name": "选股群",
       "sessionSuffix": "_pick",
       "thinkingDepth": "xhigh",
-      "memoryStrategy": "retain_daily",
       "model": "deepseek/deepseek-v4-pro",
+      "memoryStrategy": "retain_daily",
       "autoCompactBeforeTask": false,
       "autoCompactDaily": true,
-      "description": "选股+复盘，长记忆保留，晚间统一compact"
+      "description": "选股+复盘，长记忆保留，晚间统一compact，思考深度max"
     },
     "oc_0b2b44783573f9cb32afccec305ac0ba": {
       "name": "盘中群",
       "sessionSuffix": "_quick",
-      "thinkingDepth": "medium",
-      "memoryStrategy": "retain_day",
+      "thinkingDepth": "low",
       "model": "deepseek/deepseek-v4-pro",
+      "memoryStrategy": "retain_day",
       "autoCompactBeforeTask": false,
-      "description": "实时响应，数据优先，当日有效"
+      "description": "实时响应，数据优先，当日有效，思考深度low"
     }
   }
 }

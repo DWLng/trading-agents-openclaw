@@ -31,7 +31,7 @@
 - 可通过链接分享，无需附件
 - 跨平台兼容
 
-**HTML报告命名**：`{股票代码}_{股票名}_超级深度调研_{日期}.html`
+**HTML报告命名**：`super-deep_{6位代码}_{YYYYMMDD}.html`（纯ASCII格式，确保URL可完整识别）
 **存储位置**：`memory/reports/`
 
 ---
@@ -436,11 +436,11 @@ subprocess.run([
 ### 5.3 发送给用户的格式
 
 ```
-📊 {报告类型} 已生成
+📊 超级深度调研报告已生成
 
-{股票名称} {分析日期}
+中芯国际(688981) 2026-05-10
 
-🔗 网页版研报: https://xxx.trading-reports.pages.dev/{文件名}.html
+🔗 网页版研报: https://xxx.trading-reports.pages.dev/super-deep_688981_20260510.html
 
 {简要摘要}
 ```

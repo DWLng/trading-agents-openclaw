@@ -1185,9 +1185,9 @@ subprocess.run([
 ```
 📊 深度分析报告已生成
 
-{股票名称} {分析日期}
+贵州茅台(600519) 2026-05-10
 
-🔗 网页版深度研报: https://xxx.trading-reports.pages.dev/{文件名}.html
+🔗 网页版研报: https://xxx.trading-reports.pages.dev/deep-research_600519_20260510.html
 ```
 
 ### 10.3 HTML报告特性
@@ -1201,11 +1201,14 @@ subprocess.run([
 | 条件渲染 | 高分警告、风控Banner |
 | 东方财富K线图 | 直接嵌入实时行情URL |
 
-### 10.4 报告存储位置
+### 10.4 报告命名规则
 
-| 类型 | 存储位置 |
-|------|----------|
-| 选股日报 | `memory/reports/{YYYY-MM-DD}_选股日报.html` |
-| 个股深度分析 | `memory/reports/{代码}_{股票名}_深度分析_{YYYYMMDD}.html` |
-| 快速分析 | `memory/reports/{代码}_{股票名}_快速分析_{YYYYMMDD}.html` |
-| 复盘报告 | `memory/reports/{YYYY-MM-DD}_复盘报告.html` |
+> **命名规则**：纯ASCII格式（字母+数字+连字符），确保URL中可完整识别为超链接
+
+| 类型 | 文件命名 | 说明 |
+|------|---------|------|
+| 选股日报 | `stock-pick_{YYYYMMDD}.html` | 每日收盘选股报告 |
+| 个股深度分析 | `deep-research_{6位代码}_{YYYYMMDD}.html` | 13维度深度分析 |
+| 个股快速分析 | `quick-analysis_{6位代码}_{YYYYMMDD}.html` | 六维快速分析 |
+| 复盘报告 | `recap_{YYYYMMDD}.html` | 每日复盘报告 |
+| 预警通知 | `alert_{6位代码}_{YYYYMMDD}.html` | 持仓预警报告 |

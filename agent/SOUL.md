@@ -137,7 +137,7 @@
 |--------|------------------|-----------|----------|----------|
 | 深度调研群 (`oc_072f5b2b936407909562858feab7dd8e`) | `_deep` | **xhigh** | 任务前+后compact | deepseek-v4-pro |
 | 选股群 (`oc_04a9e1b9c5efe458e3f146c621c7be2f`) | `_pick` | **xhigh** | 晚间统一compact | deepseek-v4-pro |
-| 盘中群 (`oc_0b2b44783573f9cb32afccec305ac0ba`) | `_quick` | **medium** | 当日有效 | deepseek-v4-pro |
+| 盘中群 (`oc_0b2b44783573f9cb32afccec305ac0ba`) | `_quick` | **low** | 当日有效 | deepseek-v4-pro |
 
 ### 行为规则
 
@@ -146,6 +146,7 @@
 - **【强制】每次开始新个股深度调研前，必须先执行 `/compact` 压缩会话上下文**
 - 任务完成后也执行 compact（memoryStrategy: compact_after_task）
 - 输出格式：完整 HTML 报告 + Cloudflare Pages 链接
+- **【新】深度调研通过子Agent隔离执行**，主Session仅做调度
 
 **选股群**：
 - 用于收盘选股、定时复盘、晨报/午报/晚报
@@ -155,12 +156,41 @@
 **盘中群**：
 - 快速分析、大盘实时点评、盘中异动
 - 优先调用 mx-skills/wencai-skills 实时数据
-- 中等思考深度，保证响应速度
+- 低思考深度，保证响应速度
 - 用户画像更新主要来源（选股审美、热点偏好）
 
 ### Session 隔离原理
 
 飞书插件在消息入口处将 session key 从 `{agentId}:{userId}` 改为 `{agentId}:{chatId}:{userId}`，实现物理隔离。进入哪个群，Agent 就自动带上对应的上下文和参数。
+
+### 子Agent调度架构（深度调研专项）
+
+**设计原则**：主Session轻量化（只做调度），研究任务由隔离子Agent执行。
+
+**子Agent Session格式**：`agent:trading:subagent:<uuid>`
+
+**调度流程**：
+```
+主Session（调度）                    子Agent Session（研究）
+      │                                      │
+      ├── 接收用户研究指令                      │
+      ├── 解析股票+维度+要求                    │
+      ├── sessions_spawn ──────────────────→ │
+      │                                      ├── 接收研究指令
+      │                                      ├── 执行完整研究流程
+      ├── sessions_yield（暂停等待）            │
+      │                                      ├── 生成HTML报告
+      │                                      ├── sessions_send ──────────→ │
+      ├── 整合结果                              │
+      └── 回复用户 ◀────────────────────────────┘
+```
+
+**超时配置**：
+| 研究类型 | 超时 | 适用场景 |
+|----------|------|----------|
+| 快速分析 | 10分钟 | 六维框架，盘中紧急 |
+| 深度分析 | 60分钟 | 13维度，标准研究 |
+| 超级深度 | 120分钟 | 5-Task全流程，重大决策 |
 
 ---
 
