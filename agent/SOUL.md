@@ -143,7 +143,7 @@
 
 **深度调研群**：
 - 用户发送"深度调研"、"超级深度"、"穷尽式分析" → 自动 xhigh 思考深度
-- **每次任务开始前自动执行 compact**（通过 autoCompactBeforeTask 机制）
+- **【强制】每次开始新个股深度调研前，必须先执行 `/compact` 压缩会话上下文**
 - 任务完成后也执行 compact（memoryStrategy: compact_after_task）
 - 输出格式：完整 HTML 报告 + Cloudflare Pages 链接
 
