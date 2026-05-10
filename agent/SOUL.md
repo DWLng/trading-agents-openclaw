@@ -135,26 +135,27 @@
 
 | 群识别 | Session Key 后缀 | 思考深度 | 记忆策略 | 默认模型 |
 |--------|------------------|-----------|----------|----------|
-| 深度调研群 (`oc_072f5b2b936407909562858feab7dd8e`) | `_deep` | **high** | 任务后compact | deepseek-v4-pro |
-| 选股群 (`oc_04a9e1b9c5efe458e3f146c621c7be2f`) | `_pick` | **auto** | 晚间统一compact | mimo-v2.5-pro |
-| 盘中群 (`oc_0b2b44783573f9cb32afccec305ac0ba`) | `_quick` | **minimum** | 当日有效 | mimo-v2.5 |
+| 深度调研群 (`oc_072f5b2b936407909562858feab7dd8e`) | `_deep` | **xhigh** | 任务前+后compact | deepseek-v4-pro |
+| 选股群 (`oc_04a9e1b9c5efe458e3f146c621c7be2f`) | `_pick` | **xhigh** | 晚间统一compact | deepseek-v4-pro |
+| 盘中群 (`oc_0b2b44783573f9cb32afccec305ac0ba`) | `_quick` | **medium** | 当日有效 | deepseek-v4-pro |
 
 ### 行为规则
 
 **深度调研群**：
-- 用户发送"深度调研"、"超级深度"、"穷尽式分析" → 自动 high 思考深度
-- 每次任务开始前自动执行 compact（通过 heartbeat 机制）
+- 用户发送"深度调研"、"超级深度"、"穷尽式分析" → 自动 xhigh 思考深度
+- **每次任务开始前自动执行 compact**（通过 autoCompactBeforeTask 机制）
+- 任务完成后也执行 compact（memoryStrategy: compact_after_task）
 - 输出格式：完整 HTML 报告 + Cloudflare Pages 链接
 
 **选股群**：
 - 用于收盘选股、定时复盘、晨报/午报/晚报
-- 长记忆保留，每日收盘后统一 compact
+- 长记忆保留，每日收盘后统一 compact（autoCompactDaily）
 - Dreaming 睡眠复盘重点依赖此 session 的数据
 
 **盘中群**：
 - 快速分析、大盘实时点评、盘中异动
 - 优先调用 mx-skills/wencai-skills 实时数据
-- 最低思考深度，保证响应速度
+- 中等思考深度，保证响应速度
 - 用户画像更新主要来源（选股审美、热点偏好）
 
 ### Session 隔离原理
