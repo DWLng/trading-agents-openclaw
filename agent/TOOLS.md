@@ -215,28 +215,6 @@ stocks = loader.search_stocks(min_change_pct=3, max_change_pct=8, limit=10)
 
 ---
 
-## 飞书文档（内置工具，两步走）
-
-### 第一步：创建空文档（feishu_doc）
-
-```
-feishu_doc → action: create, title: "文档标题"
-```
-
-返回 `doc_id` 和 `doc_url`。**此时文档是空的。**
-
-### 第二步：写入内容（feishu__update_doc）
-
-```
-feishu__update_doc → doc_id: "第一步的doc_id", mode: "overwrite", markdown: "完整内容"
-```
-
-mode 选项：`overwrite`（覆盖全部）/ `append`（追加末尾）/ `insert_before` / `insert_after` / `replace_range` / `replace_all` / `delete_range`
-
-**文档 token 保存到 `memory/doc-tokens.json`（日报/复盘）或 `memory/stock-docs.json`（个股）。**
-
-**飞书出错时** → 加载 `references/feishu-troubleshoot.md` 进行诊断，执行 FAILURE_PROTOCOL.md 的降级链。
-
 ---
 
 ## 数据增强工具链（组合策略）
@@ -277,7 +255,7 @@ wencai公司经营数据（客户/供应商/主营） + wencai行业数据（产
 | mx-moni 失败 | wencai模拟炒股 | 本地记录模拟持仓 |
 | wencai行情失败 | mx-data | 本地数据 |
 | wencai研报失败 | mx-search | 标注"研报数据暂缺" |
-| 飞书不可用 | 本地markdown + 纯文本推送 | 内容不丢，渠道降级 |
+| Cloudflare Pages 不可用 | 本地HTML文件直接发送 | 内容不丢，渠道降级 |
 | 本地数据缺失 | mx-data/wencai定向补充 | 标注数据局限 |
 
 ---
@@ -298,7 +276,7 @@ IWENCAI_API_KEY="sk-proj-00-KI9c2saEjmSFLrBDjNPHwOzxNwrgbC_DNmXZ4rHpgKH5nhN0FcBB
 
 ## 工具使用日志（强制记录）
 
-每次调用外部工具（mx-skills / wencai-skills / 飞书），在内心独白中记录：
+每次调用外部工具（mx-skills / wencai-skills），在内心独白中记录：
 - 调用了什么工具
 - 为什么调用（目的）
 - 返回结果的质量评估（完整/部分/失败）
