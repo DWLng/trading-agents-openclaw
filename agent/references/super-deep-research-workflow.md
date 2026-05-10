@@ -227,26 +227,26 @@
 
 **执行步骤**：
 
-1. **创建飞书文档**：
-   - 使用 `lark-doc` skill 创建飞书文档
-   - 内容为完整的超级深度调研报告
-   - 这是用户习惯的主要输出格式
-
-2. **生成HTML报告**（并行）：
-   - 构建包含 `title`、`dashboard`、`content_markdown` 的JSON
+1. **生成HTML报告**：
+   - 构建包含 `title`、`dashboard`、`content_markdown`、`kline_data`、`fund_flow_data` 的JSON
+   - ⚠️ **必须提取真实数据填充 kline_data 和 fund_flow_data**
    - 调用 `report-generator` skill：
      ```bash
      python3 skills/report-generator/report_generator.py <input.json>
      ```
    - HTML使用Tailwind CSS + ECharts，支持动态图表
 
-3. **部署到 Cloudflare Pages**：
+2. **部署到 Cloudflare Pages**：
    - 使用 `cf-upload` skill 部署生成的HTML
    - 获取永久在线链接
 
+3. **Cloudflare部署失败时的备选方案**：
+   - 直接发送HTML文件给用户（作为附件或文件形式）
+   - 不要因为Cloudflare失败就放弃HTML报告
+
 4. **返回结果**：
-   - 发送飞书文档链接给用户
-   - 同时发送HTML报告链接
+   - 优先发送 Cloudflare Pages 链接
+   - 如果Cloudflare失败，发送HTML文件
 
 **JSON数据格式**：
 
@@ -261,15 +261,22 @@
         {"label": "综合评级", "value": "{评级}", "icon": "star", "value_class": "text-blue-400"},
         {"label": "预期涨幅", "value": "{涨幅}%", "icon": "trending-up", "value_class": "text-green-400"}
     ],
-    "kline_data": null,
-    "fund_flow_data": null,
+    "kline_data": {
+        "xAxis": {"data": ["2026-04-01", "2026-04-02", ...]},
+        "series": [{"type": "candlestick", "data": [[开盘, 收盘, 最低, 最高], ...]}]
+    },
+    "fund_flow_data": {
+        "xAxis": {"data": ["5/4", "5/5", "5/6", "5/7", "5/8"]},
+        "series": [{"type": "bar", "name": "主力净流入", "data": [...]}]
+    },
     "score": {评分}
 }
 ```
 
+⚠️ **重要**：必须提取真实数据填充 `kline_data` 和 `fund_flow_data`，禁止输出 null！
+
 **交付物**：
-- 飞书文档链接
-- HTML报告Cloudflare Pages链接：`memory/reports/{股票代码}_{日期}/超级深度调研报告.html`
+- HTML报告本地文件：`memory/reports/{股票代码}_{日期}/超级深度调研报告.html`
 
 ---
 
@@ -309,12 +316,12 @@
 - [ ] chart_32 估值足球场图 ⭐
 
 ### Task 5 必过项
-- [ ] 飞书文档创建成功，获得文档链接
 - [ ] HTML报告生成成功（使用report-generator）
-- [ ] HTML报告上传Cloudflare Pages，获得分享链接
-- [ ] 同时向用户发送两个链接
 - [ ] JSON数据可被Jinja2模板正确渲染
-- [ ] HTML报告部署Cloudflare Pages成功
+- [ ] kline_data 必须包含真实K线数据
+- [ ] fund_flow_data 必须包含真实资金流数据
+- [ ] 尝试部署到Cloudflare Pages
+- [ ] **Cloudflare部署失败时**：直接发送HTML文件给用户
 
 ---
 

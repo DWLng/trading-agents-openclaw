@@ -82,10 +82,11 @@ Step 7: 记录 & 推送 → memory/YYYY-MM-DD-picks.md + 飞书通知
    - 宏观环境：`wencai宏观数据查询`
    - 风险评估：`wencai事件数据查询` + `mx-search`（负面新闻）+ `wencai研报搜索`（风险警示）
 3. 13维度全覆盖（根据公司类型选择性启用重点维度）
-4. 输出：飞书文档（标题格式：`🔬 {股票名}({代码}) 深度分析`）
-5. **独立并行**：调用 `report-generator` 生成HTML报告，部署到Cloudflare Pages获取链接
-   - ⚠️ HTML报告生成是**必须交付物**，无论飞书文档是否成功
-   - 不要在飞书步骤卡住，即使失败也要继续生成HTML
+4. 输出：生成专业HTML报告（主要交付物）
+5. **独立并行**：调用 `report-generator` 生成HTML报告
+   - 必须提取真实数据填充 `kline_data` 和 `fund_flow_data`
+   - 部署到Cloudflare Pages获取链接
+   - Cloudflare部署失败时，直接发送HTML文件给用户
 6. 文档 append 到 `memory/stock-docs.json` 注册表
 
 **深度级别自适应**：
@@ -296,6 +297,8 @@ subprocess.run([
 
 {简要摘要}
 ```
+
+⚠️ **Cloudflare部署失败时**：直接发送HTML文件给用户，不要放弃。
 
 ### System 2 思考流程
 
