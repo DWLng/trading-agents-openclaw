@@ -88,7 +88,7 @@
 **执行**：
 1. 回顾本周 `memory/` 文件，提取高频主题（如"半导体""业绩暴雷""政策利好"）
 2. 将重要发现/教训整理到 `MEMORY.md`（长期认知档案）
-3. 清理过期临时文件（30天前的 `feishu-backup/` 和 `failed-tasks/`）
+3. 清理过期临时文件（30天前的 `failed-tasks/`）
 4. 检查 `cognitive-updates.md`，如有未同步到 SOUL.md/AGENTS.md 的更新，提示用户确认
 
 **弹性规则**：
@@ -135,6 +135,34 @@
 ```
 ~/.openclaw/workspace/trading/briefing/reports/
 ```
+
+---
+
+### 任务G：会话健康检查（每次heartbeat）
+
+**基础条件**：每次 heartbeat 都要执行，不需要用户指令。
+
+**执行检查**：
+1. 扫描 `~/.openclaw/agents/trading/sessions/` 目录下所有 `.jsonl` 文件
+2. 对每个群的活跃 session 检查大小：
+   - **> 100KB 且 < 300KB**：触发自动 compact（在后台静默执行，不打断当前工作）
+   - **> 300KB**：强制 compact，记录警告
+   - **> 500KB**：标记为紧急，终止当前任务（如果 agent 正在 yield 等待），强制 reset session
+
+**主动告警阈值**：
+| 指标 | 警告线 | 行动 |
+|------|--------|------|
+| 单 session 文件 > 200KB | 🟡 提醒 | 下次 heartbeat 自动 compact |
+| 单 session 文件 > 400KB | 🟠 预警 | 立即 compact |
+| 单 session 文件 > 600KB | 🔴 紧急 | 强制 reset session |
+| 任意 session `replies=0` 连续 3 次 dispatch | 🔴 紧急 | 通知用户执行 `gateway restart` |
+
+**检查方式**：
+```bash
+ls -la ~/.openclaw/agents/trading/sessions/*.jsonl | grep -v deleted | grep -v reset
+```
+
+**记录**：检查结果写入 `memory/session-health.md`，记录每次检查时间、发现的问题、采取的行动。
 
 ---
 
